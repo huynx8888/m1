@@ -1,0 +1,346 @@
+\documentclass[paper=a4, fontsize=11pt]{scrartcl}	% Article class of KOMA-script with 11pt font and a4 format
+
+\usepackage[french]{babel}
+\usepackage[protrusion=true,expansion=true]{microtype}				% Better typography
+%\usepackage{amsmath,amsfonts,amsthm}										% Math packages
+\usepackage[pdftex]{graphicx}														% Enable pdflatex
+\usepackage{color,transparent}													% If you use color and/or transparency
+\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage[hang, small,labelfont=bf,up,textfont=it,up]{caption}	% Custom captions under/above floats
+\usepackage{epstopdf}																	% Converts .eps to .pdf
+\usepackage{subfig}																		% Subfigures
+\usepackage{booktabs}																	% Nicer tables
+\usepackage{listings}
+
+\usepackage{caption}
+
+%%% Advanced verbatim environment
+\usepackage{verbatim}
+\usepackage{fancyvrb}
+\DefineShortVerb{\|}								% delimiter to display inline verbatim text
+
+
+%%% Custom sectioning (sectsty package)
+\usepackage{sectsty}								% Custom sectioning (see below)
+\allsectionsfont{%									% Change font of al section commands
+	\usefont{OT1}{bch}{b}{n}%					% bch-b-n: CharterBT-Bold font
+%	\hspace{15pt}%									% Uncomment for indentation
+}
+
+\sectionfont{%										% Change font of \section command
+	\usefont{OT1}{bch}{b}{n}%					% bch-b-n: CharterBT-Bold font
+	\sectionrule{0pt}{0pt}{-5pt}{0.8pt}%	% Horizontal rule below section
+	}
+
+%%% Input Characters
+\usepackage[utf8]{inputenc}
+%%% Custom headers/footers (fancyhdr package)
+\usepackage{fancyhdr}
+\pagestyle{fancyplain}
+\fancyhead{}														% No page header
+\fancyfoot[C]{\thepage}										% Pagenumbering at center of footer
+\fancyfoot[R]{\small \texttt{NGUYEN Van Tho - IFI - Promotion 17}}	% You can remove/edit this line 
+\renewcommand{\headrulewidth}{0pt}				% Remove header underlines
+\renewcommand{\footrulewidth}{0pt}				% Remove footer underlines
+\setlength{\headheight}{13.6pt}
+
+%\lstdefinestyle{Shell}{delim=[il][\bfseries]{BB}}
+ 
+\lstset{
+ 	language=C++,
+% 	captionpos=b,
+ 	tabsize=3,
+ 	frame=lines,
+ 	keywordstyle=\color{blue},
+ 	commentstyle=\color{gray},
+ 	stringstyle=\color{green},
+	extendedchars=true,
+% 	numbers=left,
+ 	numberstyle=\tiny,
+ 	numbersep=5pt,
+ 	breaklines=true,
+ 	showstringspaces=false,
+ 	basicstyle=\footnotesize\ttfamily,
+ 	emph={label},
+ 	inputencoding=utf8,
+ 	extendedchars=true, 	
+ 	  literate=%
+ 	  {é}{{\'{e}}}1
+ 	  {è}{{\`{e}}}1
+ 	  {ê}{{\^{e}}}1
+ 	  {ë}{{\¨{e}}}1
+ 	  {û}{{\^{u}}}1
+ 	  {ù}{{\`{u}}}1
+ 	  {â}{{\^{a}}}1
+ 	  {à}{{\`{a}}}1
+ 	  {î}{{\^{i}}}1
+ 	  {ç}{{\c{c}}}1
+ 	  {Ç}{{\c{C}}}1
+ 	  {É}{{\'{E}}}1
+ 	  {Ê}{{\^{E}}}1
+ 	  {À}{{\`{A}}}1
+ 	  {Â}{{\^{A}}}1
+ 	  {Î}{{\^{I}}}1	
+}
+   %\DeclareCaptionFont{blue}{\color{blue}} 
+ 
+%\captionsetup[lstlisting]{singlelinecheck=false, labelfont={blue}, textfont={blue}}
+\DeclareCaptionFont{white}{\color{white}}
+\DeclareCaptionFormat{listing}{\colorbox{gray}{\parbox{\textwidth}{#1#2#3}}}
+\captionsetup[lstlisting]{format=listing,labelfont=white,textfont=white}
+%%% Equation and float numbering
+%\numberwithin{equation}{section}															% Equationnumbering: section.eq#
+%\numberwithin{figure}{section}																% Figurenumbering: section.fig#
+%\numberwithin{table}{section}																% Tablenumbering: section.tab#
+\title{ \Huge {Traitement d'images}\\ \Large TP2 : Transformée de Fourier et traitements fréquentiels} % Title
+
+\author{\textsc{NGUYEN} Van Tho} % Author name
+
+\date{\today} % Date for the report
+
+\begin{document}
+
+\maketitle % Insert the title, author and date
+
+\begin{center}
+\begin{tabular}{l r}
+Encadrement: & NGUYEN Thi Oanh % Instructor/supervisor
+\end{tabular}
+\end{center}
+
+% If you wish to include an abstract, uncomment the lines below
+% \begin{abstract}
+% Abstract text
+% \end{abstract}
+
+%----------------------------------------------------------------------------------------
+%	SECTION 1
+%----------------------------------------------------------------------------------------
+
+\section{Objective}
+
+Ce TP effectue à réaliser la transformée de Fourier des images à l'aide de l'outil openCV et à implémenter quelques traitements fréquentiels.\\ 
+Dans ce TP, j'implémente le filtre passe-bas, le filtre passe-haut et quelques filtres pour corriger le bruit sinusoïdal: 
+
+%section fourier
+\section{Transformée de Fourier}
+Dans cette partie, le programme prend l'image en argument d'entrée. Le programme transforme cette image en domaine fréquent. La dernier étape, la transformée inverse de Fourier est exécutée pour recréer l'image originale.
+La commande pour lancer le programme: 
+\begin{lstlisting}
+    % ./tp2 <image_name> dft
+\end{lstlisting}
+Résultats:  
+\begin{figure}[h]
+	\begin{center}$
+		\begin{array}[h]{ccc}
+		\includegraphics[width=5cm]{../images/vp.jpg}&
+		\includegraphics[width=5cm]{../images/musee-inverse.jpg}&
+		\includegraphics[width=5cm]{../images/musee-spectrum.jpg}		
+		\end{array}$		
+	\end{center}
+	\caption{L'image original, le résultat de la transformée inverse et le spectre}
+\end{figure}
+
+On constate que l'image originale et le résultat de la transformée inverse sont identiques.
+
+Nous allons analyser le spectre de l'image. Au centre du spectre, c'est la composante continue (DC) de l'image qui corresponde à la moitié de niveau de gris de l'image, qui a la fréquence zéro. Les points qui sont proche au centre sont les basses fréquences, Les points qui sont loin du centre sont les hautes fréquences. 
+
+On peut voir dans l'image originale, il y a des bords à l'escalier et sur la plafond. À ces bords, le changement de niveau de gris est très fort (haute contraste), celui-ci a la haute fréquence et corresponde aux lignes du centre aux extrémités de l'image.
+ 
+\section{Traitements fréquentiels}
+\subsection{Filtre passe bas}
+L'objectif de ce filtre est d'atténuer le composante dont la fréquence haute. En effet, l'image est transformée en domaine fréquent par la transformée de Fourier. Le produit de la transformée de Fourier est un tableau de nombre complexe qui sont présentés par le tableau réel et le tableau imaginaire. Un circle déterminé par l'argument qui est la frontière: les point (de tableau réel et de imaginaire) à l'extérieur du circle sont mis à 0. Après la transformation, une transformation inverse est réalisée pour créer l'image filtrée. Le code pour appliquer le filtre est affiché ci-dessous:
+
+\begin{lstlisting}[label=lowpass,caption=Le filtre passe bas]
+    for(int i = 0; i < radius; i++){
+        for(int j = 0; j < radius; j++){
+            if(i*i + j*j <= r2){
+                lowReal.at<float>(j,i) = imgReal.at<float>(j,i);
+                lowImaginary.at<float>(j,i) = imgImaginary.at<float>(j,i);
+                                                                                                                                       
+                lowReal.at<float>(j, cols - i - 1) = imgReal.at<float>(j, cols - i - 1);
+                lowImaginary.at<float>(j, cols - i - 1) = imgImaginary.at<float>(j, cols - i - 1);
+
+                lowReal.at<float>(rows - j - 1,i) = imgReal.at<float>(rows - j - 1, i);
+                lowImaginary.at<float>(rows - j - 1,i) = imgImaginary.at<float>(rows - j - 1, i);
+
+                lowReal.at<float>(rows - j - 1, cols - i - 1) = imgReal.at<float>(rows - j - 1, cols - i - 1);
+                lowImaginary.at<float>(rows - j -1, cols - i - 1) = imgImaginary.at<float>(rows - j - 1, cols - i - 1);
+            }
+        }
+    }
+	imgReal = lowReal;
+	imgImaginary = lowImaginary;
+\end{lstlisting}
+\subsubsection{Expérimentation}
+La commande pour lancer le programme est affichée ci-dessous. Où radius est un nombre entre 0.0 à 1.0.
+\begin{lstlisting}
+	./tp2 <nom de l`image> lowpass <radius> {préfixe de sortie }
+\end{lstlisting}
+J'expérimente plusieurs images avec des différents rayons. Les images ci-dessous sont les résultats:
+\begin{figure}[h]
+	\begin{center}
+		\begin{tabular}[h]{ccc}
+		\includegraphics[width=4cm]{../images/11162871_l_1361155185.png}&
+		\includegraphics[width=4cm]{../images/cub-lowpass-7.jpg}&
+		\includegraphics[width=4cm]{../images/cub-lowpass-3.jpg}\\
+		\includegraphics[width=4cm]{../images/cub-spectrum.jpg}&		
+		\includegraphics[width=4cm]{../images/cub-spectrum-lowpass-7.jpg}&
+		\includegraphics[width=4cm]{../images/cub-spectrum-lowpass-3.jpg}
+		\end{tabular}
+
+	\end{center}
+	\caption{L'image original, le filtre passe bas avec rayon 0.7 et 0.3}	
+\end{figure}
+\newpage
+\begin{figure}[h]
+	\begin{center}
+		\begin{tabular}[h]{ccc}
+		\includegraphics[width=4cm]{../images/stock-photo-old-decorative-alphabet-from-th-century-40611871.jpg}&
+		\includegraphics[width=4cm]{../images/alpha-lowpass-7.jpg}&
+		\includegraphics[width=4cm]{../images/alpha-lowpass-3.jpg}\\
+		\includegraphics[width=4cm]{../images/alpha-spectrum.jpg}&		
+		\includegraphics[width=4cm]{../images/alpha-spectrum-lowpass-7.jpg}&
+		\includegraphics[width=4cm]{../images/alpha-spectrum-lowpass-3.jpg}		\end{tabular}
+	\end{center}
+	\caption{L'image original, le filtre passe bas avec rayon 0.7 et 0.3}
+\end{figure}
+
+\subsubsection{Analyse des résultats}
+À partir des résultats on peut dire que le filtre passe bas lisse l'image, atténue les bruits en haute fréquence. Avec le rayon plus petit, l'image est plus lisse.
+Cependant, l'image après le traitement se perde quelques détails. Le niveau de la perte est dépendu à la valeur du rayon. Le rayon est plus petit, la perte est plus grande.  
+\subsection{Filtre passe haut}
+L'objectif de ce filtre est d'atténuer les composantes dont la fréquence basse et passer les composantes dont la fréquence haute. Comme le filtre passe bas, on a un cycle pour définir la frontière, mais maintenance, l'intérieur de l'image est mis à 0. Après la transformation, une transformation inverse est réalisée pour créer l'image filtrée. Le code pour appliquer le filtre est affiché ci-dessous:
+\begin{lstlisting}[label=high pass,caption=Le filtre passe haut]
+    for(int i = 0; i <= radius; i++){
+        for(int j = 0; j <= radius; j++){
+            if(i*i + j*j <= r2){
+                imgReal.at<float>(j,i) = 0;
+                imgImaginary.at<float>(j,i) = 0;
+
+                imgReal.at<float>(j, cols - i - 1) = 0;
+                imgImaginary.at<float>(j, cols - i - 1) = 0;
+
+                imgReal.at<float>(rows - j - 1, i) = 0;
+                imgImaginary.at<float>(rows - j - 1, i) = 0;
+
+                imgReal.at<float>(rows - j - 1, cols - i - 1) = 0;
+                imgImaginary.at<float>(rows - j - 1, cols - i - 1) = 0;
+            }   
+        }   
+    }   
+\end{lstlisting}
+\subsubsection{Expérimentation}
+La commande pour lancer le programme est affichée ci-dessous. Où radius est un nombre entre 0.0 à 1.0.
+\begin{lstlisting}
+	./tp2 <nom de l`image> highpass <radius> {préfixe de sortie }
+\end{lstlisting}
+J'expérimente le filtre passe haut avec les images dans la partie ci-dessus. Les images ci-dessous sont les résultats:
+\begin{figure}[h]
+	\begin{center}
+		\begin{tabular}[h]{ccc}
+		\includegraphics[width=4cm]{../images/11162871_l_1361155185.png}&
+		\includegraphics[width=4cm]{../images/cub-highpass-1.jpg}&
+		\includegraphics[width=4cm]{../images/cub-highpass-3.jpg}\\
+		\includegraphics[width=4cm]{../images/cub-spectrum.jpg}&		
+		\includegraphics[width=4cm]{../images/cub-spectrum-highpass-1.jpg}&
+		\includegraphics[width=4cm]{../images/cub-spectrum-highpass-3.jpg}
+		\end{tabular}
+
+	\end{center}
+	\caption{L'image original, le filtre passe haut avec rayon 0.1 et 0.3}	
+\end{figure}
+\newpage
+\begin{figure}[h]
+	\begin{center}
+		\begin{tabular}[h]{ccc}
+		\includegraphics[width=4cm]{../images/stock-photo-old-decorative-alphabet-from-th-century-40611871.jpg}&
+		\includegraphics[width=4cm]{../images/alpha-highpass-1.jpg}&
+		\includegraphics[width=4cm]{../images/alpha-highpass-3.jpg}\\
+		\includegraphics[width=4cm]{../images/alpha-spectrum.jpg}&		
+		\includegraphics[width=4cm]{../images/alpha-spectrum-highpass-1.jpg}&
+		\includegraphics[width=4cm]{../images/alpha-spectrum-highpass-3.jpg}		\end{tabular}
+	\end{center}
+	\caption{L'image original, le filtre passe haut avec rayon 0.1 et 0.3}	
+\end{figure}
+
+\subsubsection{Analyse des résultats}
+Le filtre passe haut a l'effet inverse celui du filtre passe bas. Effectivement, l'image, résultat du filtre est plus aigue (sharp en anglais). Les contours de l'image, qui ont les fréquences hautes sont plus clairs. Avec le rayon plus grand, l'image est plus aigue.
+Cependant, l'image après le traitement se perde quelques contenus. Le niveau de la perte est dépendu à la valeur du rayon. Le rayon est plus grand, la perte est plus grande.  
+
+\subsection{Filtre du bruit sinusoïdal}
+Dans cette partie, j'ai utilise plusieurs filtres pour corriger le bruit sinusoïdal.
+\subsubsection{Filtre coupe-bande}
+Ce filtre est l'ensemble du filtre passe haut et du filtre passe bas. Les composantes qui sont entre deux cycles sont atténuées.
+\subsubsection{Filtre Butterworth}
+Le filtre est calculé par ce formule:
+\begin{center}
+	$H(u,v) = 1 - 1/(1 + (D-D_{0})^2/(w/2)^2)$
+
+\end{center}
+\begin{lstlisting}[label=butterworth,caption=Le filtre Butterworth]
+    float h = getRadius(cols, rows, high);
+    float l = getRadius(cols, rows, low);
+    float high2 = h*h;
+    float low2 = l*l;
+    for(int i = 0; i < cols; i++){
+        for(int j = 0; j < rows; j++){
+            int dj = (j < rows / 2) ? j : rows - j;
+            int di = (i < cols / 2) ? i : cols - i;
+            float dist2 = dj*dj + di*di;
+            if(dist2 > low2 && dist2 < high2){
+                imgReal.at<float>(j,i) = 0;
+                imgImaginary.at<float>(j,i) = 0;
+            }
+        }
+    }
+\end{lstlisting}
+\subsubsection{Un autre filtre du bruit sinusoïdal}
+Dans ce filtre, j'ai développé un algorithme pour trouver les points plus clairs dans le spectre (sauf le point DC). Après ces points sont trouvés, des petits cycles noires sont créés autour ces points.
+
+\subsubsection{Expérimentation}
+Les commande pour lancer le programme sont affichées ci-dessous.
+\begin{lstlisting}
+	./tp2 <nom de l`image> bandreject <radius1> <radius2>
+	./tp2 <nom de l`image> butterworth <radius1> <radius2> <puissance> 
+	./tp2 <nom de l`image> sin
+\end{lstlisting}
+J'expérimente ces filtre avec les images qui ont le bruit sinusoïdal. Les images ci-dessous sont les résultats:
+\newpage
+\begin{figure}[h!]
+	\begin{center}
+		\begin{tabular}[h]{cccc}
+		\includegraphics[width=3.7cm]{../images/cam1-inverse.jpg}&
+		\includegraphics[width=3.7cm]{../images/bandreject-cam1.jpg}&
+		\includegraphics[width=3.7cm]{../images/cam1-butterworth.jpg}&
+		\includegraphics[width=3.7cm]{../images/cam1-sin.jpg}\\
+		\includegraphics[width=3.7cm]{../images/cam1-spectrum.jpg}&		
+		\includegraphics[width=3.7cm]{../images/spec-bandreject-cam1.jpg}&
+		\includegraphics[width=3.7cm]{../images/cam1-spectrum-butterworth.jpg}&
+		\includegraphics[width=3.7cm]{../images/cam1-spectrum-sin.jpg}
+		\end{tabular}
+		\begin{tabular}[h]{cccc}
+		\includegraphics[width=3.7cm]{../images/cam2-inverse.jpg}&
+		\includegraphics[width=3.7cm]{../images/bandreject-cam2.jpg}&
+		\includegraphics[width=3.7cm]{../images/cam2-butterworth.jpg}&
+		\includegraphics[width=3.7cm]{../images/cam2-sin.jpg}\\
+		\includegraphics[width=3.7cm]{../images/cam2-spectrum.jpg}&		
+		\includegraphics[width=3.7cm]{../images/spectrum-bandreject-cam2.jpg}&
+		\includegraphics[width=3.7cm]{../images/cam2-spectrum-butterworth.jpg}&
+		\includegraphics[width=3.7cm]{../images/cam2-spectrum-sin.jpg}
+		\end{tabular}
+
+	\end{center}
+	\caption{L'image original, le filtre coupe-bande, le filtre Butterworth, et un autre filtre sinusoïdal}	
+\end{figure}
+\newpage
+\subsubsection{Analyse des résultats}
+Ces filtres peuvent filtrer le bruit sinusoïdal. Cependant le résultat est dépendu de la fréquence du bruit. Dans le premier cas, la fréquence du bruit est très bas, donc quand on applique les filtres à l'image, quelques contenus de l'image sont aussi atténués. Dans le deuxième cas, la fréquence du bruit est plus grande. Le résultat est donc meilleur car le contenu de l'image ont des fréquences plus basses. Dans tout cas, on ne peut pas totalement filtrer le bruit sinusoïdal.
+
+\section{Conclusions}
+Dans ce TP j’ai implémenté les fonctions pour calculer la transformée de Fourier et la transformée inverse de Fourier.\\
+Pour traiter des images en domaine fréquent j'ai développé des filtres: le filtre passe bas, le filtre passe haut, le filtre coupe bande, le filtre Butterworth... \\ 
+Le filtre passe bas peut lisser des images, cependant l'image perde quelques détails, les contours de l'image est plus flous.\\
+Le filtre passe haut peut filtre quelques bruits dont la fréquence basse et pour éclairer les contours. Cependant l'image peut perdre son contenu.\\
+Les filtres sinusoïdal que j'ai implémenté peut atténuer le bruit sinusoïdal à certaine fréquence. Si la fréquence du bruit est plus haute, le résultat est plus bon. Pourtant, ces algorithmes ne peuvent pas totalement atténuer le bruit, donc il faut les améliorer. Cela reste comme un travail futur. 
+\end{document}

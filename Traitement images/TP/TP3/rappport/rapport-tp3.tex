@@ -1,0 +1,373 @@
+\documentclass[article=a4, fontsize=11pt]{scrartcl}	% Article class of KOMA-script with 11pt font and a4 format
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage[protrusion=true,expansion=true]{microtype}			
+\usepackage{graphicx}
+\usepackage{color}													%
+\usepackage{xcolor}
+\usepackage[hang, small,labelfont=bf,up,textfont=it,up]{caption}	% Custom captions under/above floats
+
+\usepackage{subfig}						% Subfigures
+\usepackage{booktabs}																	% Nicer tables
+\usepackage{listings}
+%\usepackage{caption}
+\usepackage{amsmath}
+\usepackage{fancyvrb}
+
+%%% Custom sectioning (sectsty package)
+\usepackage{sectsty}								% Custom sectioning (see below)
+\allsectionsfont{%									% Change font of al section commands
+	\usefont{OT1}{bch}{b}{n}%					% bch-b-n: CharterBT-Bold font
+%	\hspace{15pt}%									% Uncomment for indentation
+}
+
+\sectionfont{%										% Change font of \section command
+	\usefont{OT1}{bch}{b}{n}%					% bch-b-n: CharterBT-Bold font
+	\sectionrule{0pt}{0pt}{-5pt}{0.8pt}%	% Horizontal rule below section
+	}
+
+%%% Input Characters
+\usepackage[utf8]{inputenc}
+%%% Custom headers/footers (fancyhdr package)
+\usepackage{fancyhdr}
+\pagestyle{fancyplain}
+\fancyhead{}														% No page header
+\fancyfoot[C]{\thepage}										% Pagenumbering at center of footer
+\fancyfoot[R]{\small \texttt{NGUYEN Van Tho - IFI - Promotion 17}}	% You can remove/edit this line 
+\renewcommand{\headrulewidth}{0pt}				% Remove header underlines
+\renewcommand{\footrulewidth}{0pt}				% Remove footer underlines
+\setlength{\headheight}{13.6pt}
+
+%\lstdefinestyle{Shell}{delim=[il][\bfseries]{BB}}
+ 
+\lstset{
+ 	language=C++,
+% 	captionpos=b,
+ 	tabsize=3,
+ 	frame=lines,
+ 	keywordstyle=\color{blue},
+ 	commentstyle=\color{gray},
+ 	stringstyle=\color{green},
+	extendedchars=true,
+% 	numbers=left,
+ 	numberstyle=\tiny,
+ 	numbersep=5pt,
+ 	breaklines=true,
+ 	showstringspaces=false,
+ 	basicstyle=\footnotesize\ttfamily,
+ 	emph={label},
+ 	inputencoding=utf8,
+ 	extendedchars=true, 	
+ 	  literate=%
+ 	  {é}{{\'{e}}}1
+ 	  {è}{{\`{e}}}1
+ 	  {ê}{{\^{e}}}1
+ 	  {ë}{{\¨{e}}}1
+ 	  {û}{{\^{u}}}1
+ 	  {ù}{{\`{u}}}1
+ 	  {â}{{\^{a}}}1
+ 	  {à}{{\`{a}}}1
+ 	  {î}{{\^{i}}}1
+ 	  {ç}{{\c{c}}}1
+ 	  {Ç}{{\c{C}}}1
+ 	  {É}{{\'{E}}}1
+ 	  {Ê}{{\^{E}}}1
+ 	  {À}{{\`{A}}}1
+ 	  {Â}{{\^{A}}}1
+ 	  {Î}{{\^{I}}}1	
+}
+   %\DeclareCaptionFont{blue}{\color{blue}} 
+ 
+%\captionsetup[lstlisting]{singlelinecheck=false, labelfont={blue}, textfont={blue}}
+\DeclareCaptionFont{white}{\color{white}}
+\DeclareCaptionFormat{listing}{\colorbox{gray}{\parbox{\textwidth}{#1#2#3}}}
+\captionsetup[lstlisting]{format=listing,labelfont=white,textfont=white}
+%%% Equation and float numbering
+%\numberwithin{equation}{section}															% Equationnumbering: section.eq#
+%\numberwithin{figure}{section}																% Figurenumbering: section.fig#
+%\numberwithin{table}{section}																% Tablenumbering: section.tab#
+\title{ \Large {Institut de la Francophonie pour l'informatique \\ \Huge Traitement d'images}\\ \Large TP3 : Evaluation des détecteurs de contours} % Title
+
+\author{\textsc{NGUYEN} Van Tho} % Author name
+
+\date{\today} % Date for the report
+
+\begin{document}
+
+\maketitle % Insert the title, author and date
+
+\begin{center}
+\begin{tabular}{l r}
+Encadrement: & NGUYEN Thi Oanh % Instructor/supervisor
+\end{tabular}
+\end{center}
+
+% If you wish to include an abstract, uncomment the lines below
+% \begin{abstract}
+% Abstract text
+% \end{abstract}
+
+%----------------------------------------------------------------------------------------
+%	SECTION 1
+%----------------------------------------------------------------------------------------
+
+\section{Objective}
+
+Ce TP effectue à évaluer des détecteurs de contours. Les détecteurs sont évalués: Sobel, Laplace, Canny, Prewitt. Les trois premiers sont implémentés par OpenCV, le dernier est implémenté par moi-même à l'aide d'OpenCV en langage C++.
+
+%section fourier
+\section{Le détecteur Prewitt}
+Ce détecteur est similaire au détecteur Sobel. En fait, on fait lissage et dérivée (approximation) de l'image. Les masques pour la dérivée en X et la dérivée en Y:
+\begin{center}
+ $G_{x} =	\begin{bmatrix} 
+	  -1     & 0 & 1\\ 
+	  -1     & 0 & 1\\
+	  -1     & 0 & 1
+	\end{bmatrix}$
+\end{center}
+\begin{center}
+ $G_{y} =	\begin{bmatrix} 
+	  -1     & 0 & 1\\ 
+	  -1     & 0 & 1\\
+	  -1     & 0 & 1
+	\end{bmatrix}$
+\end{center}
+
+Le résulta est calculé par  $G_{x}$ et $G_{y}$:
+$G = \sqrt{G_{x}^2 + G_{y}^2}$
+
+\section{Expérimentation}
+\subsection{Paramètres fixés}
+	Le seuil haut du filtre Canny est fixé à 3 fois du seuil bas
+\subsection{Script shell pour exécuter les expémentations}	
+Pour évaluer les détecteurs j'ai développé un script pour calculer tous les contours de tous les images données avec les seuils de 0 à 80:
+
+\begin{lstlisting}
+	for f in images/*; do
+	    for t in {0..80..10}; do                                                                                                                                   
+	        echo $f $t; 
+	        ./canny $f $t
+	        ./laplacian $f $t
+	        ./prewitt $f $t
+	        ./sobel $f $t
+	    done
+	done
+\end{lstlisting}
+
+Après cette étape je vais choisir 10 images qui peuvent montrer les avantages et les inconvénients des détecteurs. Je vais aussi choisir les seuils appropriés pour chaque image et chaque détecteur.
+
+\subsection{Résultats}
+\clearpage
+\begin{figure}[!ht]
+	\begin{center}
+		\begin{tabular}[h]{ccc}
+			\includegraphics[width=3.5cm]{../images/basket.jpg}&
+			\includegraphics[width=3.5cm]{../images/gt/basket_gt_binary.jpg}&
+			\includegraphics[width=3.5cm]{../imgSo/images/basket-pgm30.jpg}\\
+						
+			\includegraphics[width=3.5cm]{../imgLap/images/basket-pgm40.jpg}&	
+			\includegraphics[width=3.5cm]{../imgCan/images/basket-pgm40.jpg}&
+			\includegraphics[width=3.5cm]{../imgPre/images/basket-pgm30.jpg}\\
+		\end{tabular}
+	\end{center}
+	\caption{Image \textbf{basket}; Ligne 1: L'image original, la référence tracée à la main, contours détectés par Sobel avec seuil = 30\\
+			 Ligne 2: Contours détectés par Laplace avec seuil = 40, Canny avec seuil bas = 40, Prewitt avec seuil = 30}	
+\end{figure}
+
+\begin{figure}[!ht]
+	\begin{center}
+		\begin{tabular}[h]{ccc}
+			\includegraphics[width=3.5cm]{../images/bear.jpg}&
+			\includegraphics[width=3.5cm]{../images/gt/bear_gt_binary.jpg}&
+			\includegraphics[width=3.5cm]{../imgSo/images/bear-pgm30.jpg}\\
+						
+			\includegraphics[width=3.5cm]{../imgLap/images/bear-pgm40.jpg}&	
+			\includegraphics[width=3.5cm]{../imgCan/images/bear-pgm40.jpg}&
+			\includegraphics[width=3.5cm]{../imgPre/images/bear-pgm30.jpg}\\
+		\end{tabular}
+	\end{center}
+	\caption{Image \textbf{bear}; Ligne 1: L'image original, la référence tracée à la main, contours détectés par Sobel avec seuil = 30\\
+			 Ligne 2: Contours détectés par Laplace avec seuil = 40, Canny avec seuil bas = 40, Prewitt avec seuil = 30}	
+\end{figure}
+
+\begin{figure}[!ht]
+	\begin{center}
+		\begin{tabular}[h]{ccc}
+			\includegraphics[width=3.5cm]{../images/golfcart.jpg}&
+			\includegraphics[width=3.5cm]{../images/gt/golfcart_gt_binary.jpg}&
+			\includegraphics[width=3.5cm]{../imgSo/images/golfcart-pgm40.jpg}\\
+						
+			\includegraphics[width=3.5cm]{../imgLap/images/golfcart-pgm40.jpg}&	
+			\includegraphics[width=3.5cm]{../imgCan/images/golfcart-pgm60.jpg}&
+			\includegraphics[width=3.5cm]{../imgPre/images/golfcart-pgm40.jpg}\\
+		\end{tabular}
+	\end{center}
+	\caption{Image \textbf{golfcart}; Ligne 1: L'image original, la référence tracée à la main, contours détectés par Sobel avec seuil = 40\\
+			 Ligne 2: Contours détectés par Laplace avec seuil = 40, Canny avec seuil bas = 60, Prewitt avec seuil = 40}	
+\end{figure}
+
+\begin{figure}[!ht]
+	\begin{center}
+		\begin{tabular}[h]{ccc}
+			\includegraphics[width=3.5cm]{../images/brush.jpg}&
+			\includegraphics[width=3.5cm]{../images/gt/brush_gt_binary.jpg}&
+			\includegraphics[width=3.5cm]{../imgSo/images/brush-pgm30.jpg}\\
+						
+			\includegraphics[width=3.5cm]{../imgLap/images/brush-pgm30.jpg}&
+			\includegraphics[width=3.5cm]{../imgCan/images/brush-pgm30.jpg}&
+			\includegraphics[width=3.5cm]{../imgPre/images/brush-pgm30.jpg}\\
+		\end{tabular}
+	\end{center}
+	\caption{Image \textbf{brush};Ligne 1: L'image original, la référence tracée à la main, contours détectés par Sobel avec seuil = 30\\
+			 Ligne 2: Contours détectés par Laplace avec seuil = 30, Canny avec seuil bas = 30, Prewitt avec seuil = 30}	
+\end{figure}
+
+\begin{figure}[!ht]
+	\begin{center}
+		\begin{tabular}[h]{ccc}
+			\includegraphics[width=3.5cm]{../images/tiger.jpg}&
+			\includegraphics[width=3.5cm]{../images/gt/tiger_gt_binary.jpg}&
+			\includegraphics[width=3.5cm]{../imgSo/images/tiger-pgm30.jpg}\\
+						
+			\includegraphics[width=3.5cm]{../imgLap/images/tiger-pgm40.jpg}&
+			\includegraphics[width=3.5cm]{../imgCan/images/tiger-pgm50.jpg}&
+			\includegraphics[width=3.5cm]{../imgPre/images/tiger-pgm30.jpg}\\
+		\end{tabular}
+	\end{center}
+	\caption{Image \textbf{tiger};Ligne 1: L'image original, la référence tracée à la main, contours détectés par Sobel avec seuil = 30\\
+			 Ligne 2: Contours détectés par Laplace avec seuil = 40, Canny avec seuil bas = 50, Prewitt avec seuil = 30}	
+\end{figure}
+
+\begin{figure}[!ht]
+	\begin{center}
+		\begin{tabular}[h]{ccc}
+			\includegraphics[width=3.5cm]{../images/gnu.jpg}&
+			\includegraphics[width=3.5cm]{../images/gt/gnu_gt_binary.jpg}&
+			\includegraphics[width=3.5cm]{../imgSo/images/gnu-pgm40.jpg}\\
+						
+			\includegraphics[width=3.5cm]{../imgLap/images/gnu-pgm40.jpg}&
+			\includegraphics[width=3.5cm]{../imgCan/images/gnu-pgm50.jpg}&
+			\includegraphics[width=3.5cm]{../imgPre/images/gnu-pgm40.jpg}\\
+		\end{tabular}
+	\end{center}
+	\caption{Image \textbf{gnu};Ligne 1: L'image original, la référence tracée à la main, contours détectés par Sobel avec seuil = 40\\
+			 Ligne 2: Contours détectés par Laplace avec seuil = 40, Canny avec seuil bas = 50, Prewitt avec seuil = 40}	
+\end{figure}
+
+\begin{figure}[!ht]
+	\begin{center}
+		\begin{tabular}[h]{ccc}
+			\includegraphics[width=3.5cm]{../images/tire.jpg}&
+			\includegraphics[width=3.5cm]{../images/gt/tire_gt_binary.jpg}&
+			\includegraphics[width=3.5cm]{../imgSo/images/tire-pgm40.jpg}\\
+						
+			\includegraphics[width=3.5cm]{../imgLap/images/tire-pgm40.jpg}&
+			\includegraphics[width=3.5cm]{../imgCan/images/tire-pgm40.jpg}&
+			\includegraphics[width=3.5cm]{../imgPre/images/tire-pgm40.jpg}\\
+		\end{tabular}
+	\end{center}
+	\caption{Image \textbf{tire};Ligne 1: L'image original, la référence tracée à la main, contours détectés par Sobel avec seuil = 40\\
+			 Ligne 2: Contours détectés par Laplace avec seuil = 40, Canny avec seuil bas = 40, Prewitt avec seuil = 40}	
+\end{figure}
+
+\begin{figure}[!ht]
+	\begin{center}
+		\begin{tabular}[h]{ccc}
+			\includegraphics[width=3.5cm]{../images/elephant.jpg}&
+			\includegraphics[width=3.5cm]{../images/gt/elephant_gt_binary.jpg}&
+			\includegraphics[width=3.5cm]{../imgSo/images/elephant-pgm40.jpg}\\
+						
+			\includegraphics[width=3.5cm]{../imgLap/images/elephant-pgm40.jpg}&
+			\includegraphics[width=3.5cm]{../imgCan/images/elephant-pgm50.jpg}&
+			\includegraphics[width=3.5cm]{../imgPre/images/elephant-pgm40.jpg}\\
+		\end{tabular}
+	\end{center}
+	\caption{Image \textbf{elephant};Ligne 1: L'image original, la référence tracée à la main, contours détectés par Sobel avec seuil = 40\\
+			 Ligne 2: Contours détectés par Laplace avec seuil = 40, Canny avec seuil bas = 50, Prewitt avec seuil = 40}	
+\end{figure}
+
+\begin{figure}[!ht]
+	\begin{center}
+		\begin{tabular}[h]{ccc}
+			\includegraphics[width=3.5cm]{../images/turtle.jpg}&
+			\includegraphics[width=3.5cm]{../images/gt/turtle_gt_binary.jpg}&
+			\includegraphics[width=3.5cm]{../imgSo/images/turtle-pgm40.jpg}\\
+						
+			\includegraphics[width=3.5cm]{../imgLap/images/turtle-pgm40.jpg}&
+			\includegraphics[width=3.5cm]{../imgCan/images/turtle-pgm40.jpg}&
+			\includegraphics[width=3.5cm]{../imgPre/images/turtle-pgm40.jpg}\\
+		\end{tabular}
+	\end{center}
+	\caption{Image \textbf{turtle};Ligne 1: L'image original, la référence tracée à la main, contours détectés par Sobel avec seuil = 40\\
+			 Ligne 2: Contours détectés par Laplace avec seuil = 40, Canny avec seuil bas = 40, Prewitt avec seuil = 40}	
+\end{figure}
+
+\begin{figure}[!ht]
+	\begin{center}
+		\begin{tabular}[h]{ccc}
+			\includegraphics[width=3.5cm]{../images/elephants.jpg}&
+			\includegraphics[width=3.5cm]{../images/gt/elephants_gt_binary.jpg}&
+			\includegraphics[width=3.5cm]{../imgSo/images/elephants-pgm40.jpg}\\
+						
+			\includegraphics[width=3.5cm]{../imgLap/images/elephants-pgm40.jpg}&
+			\includegraphics[width=3.5cm]{../imgCan/images/elephants-pgm50.jpg}&
+			\includegraphics[width=3.5cm]{../imgPre/images/elephants-pgm40.jpg}\\
+		\end{tabular}
+	\end{center}
+	\caption{Image \textbf{elephants};Ligne 1: L'image original, la référence tracée à la main, contours détectés par Sobel avec seuil = 40\\
+			 Ligne 2: Contours détectés par Laplace avec seuil = 40, Canny avec seuil bas = 50, Prewitt avec seuil = 40}	
+\end{figure}
+
+\section{Tableau de comparaison quantitative}
+Chaque cellule du tableau contient les valeurs P - TFP - TFN (Performance - Taux de Faux Positifs - Taux de Faux Négatifs):
+\begin{table}[!ht]
+	\begin{center}
+	    \begin{tabular}{ | l | l | l | l | l | }
+	    	\hline
+	    	Image & Sobel & Laplace & Canny & Prewitt\\
+	    	\hline
+			basket & 0.041 - 0.957 - 0.003 & 0.053 - 0.937 - 0.011 & 0.066 - 0.916 - 0.019 & 0.050 - 0.942 - 0.009 \\
+			\hline
+			bear &0.035 - 0.964 - 0.001 & 0.063 - 0.896 - 0.041 & 0.070 - 0.908 - 0.022 & 0.057 - 0.938 - 0.005 \\
+			\hline
+			golfcart & 0.189 - 0.781 - 0.030 & 0.195 - 0.741 - 0.064 & 0.376 - 0.416 - 0.209 & 0.246 - 0.674 - 0.080 \\
+			\hline
+			brush & 0.138 - 0.813 - 0.048 & 0.128 - 0.795 - 0.077 & 0.225 - 0.666 - 0.109 & 0.143 - 0.754 - 0.103 \\
+			\hline
+			tiger & 0.076 - 0.919 - 0.005 & 0.122 - 0.806 - 0.072 & 0.191 - 0.695 - 0.114 & 0.122 - 0.858 - 0.020 \\
+			\hline
+			gnu& 0.092 - 0.904 - 0.004 & 0.093 - 0.830 - 0.078 & 0.151 - 0.790 - 0.059 & 0.146 - 0.836 - 0.018 \\
+			\hline
+			tire & 0.152 - 0.815 - 0.033 & 0.139 - 0.821 - 0.040 & 0.180 - 0.736 - 0.084 & 0.201 - 0.724 - 0.075 \\
+			\hline
+			elephant & 0.178 - 0.797 - 0.025 & 0.184 - 0.713 - 0.103 & 0.269 - 0.565 - 0.167 & 0.235 - 0.676 - 0.090 \\
+			\hline
+			turtle & 0.152 - 0.800 - 0.048 & 0.170 - 0.685 - 0.145 & 0.238 - 0.610 - 0.152 & 0.175 - 0.717 - 0.108 \\
+			\hline
+			elephants &0.205 - 0.755 - 0.040 & 0.224 - 0.580 - 0.196 & 0.375 - 0.394 - 0.231 & 0.228 - 0.673 - 0.100 \\ 	    	
+			\hline	    	
+	    \end{tabular}
+	\end{center}
+\end{table}
+\section{Analyse des résultats}
+\subsection{Comparaison entre les détecteurs}
+À partir des images de contours et des valeurs de performances on peut confirmer que le détecteur Canny produit les contours beaucoup meilleur que les autres détecteurs. Les contours créés par Canny sont très minces, donc les taux de faux positifs sont plus petits, cependant, le taux de faux négatifs sont plus grands que les autres détecteurs qui ont les contours plus gros. 
+
+Le résultat de Sobel et de Prewitt sont très proches car ils sont dans le même type de méthode d'approximation de gradient, ils sont différents par les matrices de filtre. Bien que les images de contours générées par Sobel et Prewitt soient presque identiques, la performance de Prewitt est un peu mieux que celle de Sobel (Voir le tableau).
+
+Le résultat de la méthode de Laplace est comparable à celui de Sobel et Prewitt. Cependant, les contours ont tendance d'être discontinues.
+
+\subsection{Impact de bruit}
+Les résultats de tous les détecteurs sont influencés par les bruits, des fonds dont structures très complexes comme les herbes, les cheveux ...: Les cas de l'image \textbf{basket},\textbf{bear},\textbf{tiger}. Dans ces cas, il est difficile de distinguer les objets.
+
+Canny marche très bien dans les cas il y a des changements forts de gradients (image golfcart et elephants).
+
+\section{Conclusions}
+Dans ce TP j’ai implémenté le détecteur de contour Prewitt et des petits programmes pour utiliser les détecteurs Sobel, Laplace, Canny qui sont implémentés par OpenCV. J'ai aussi développé un programme pour comparer les performances des détecteurs et des scripts shells pour faire automatiquement quelques tâches.
+
+Parmi les détecteurs évalués, Canny est le meilleur. Il produit les contours plus minces et plus proches aux références tracées à la main.
+
+Les bruits, les fonds complexes peuvent mal influencer aux résultats des détecteurs.
+
+Canny donne des très bonnes résultats quand il y a des des changements forts de gradients dans les images.
+\end{document}
